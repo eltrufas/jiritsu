@@ -2,6 +2,8 @@ package db
 
 import (
 	"github.com/jmoiron/sqlx"
+
+	_ "github.com/lib/pq"
 )
 
 type Database struct {
@@ -13,6 +15,9 @@ func New(config *Config) (*Database, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &Database{db}, nil
+}
+
+func (db *Database) Close() error {
+	return nil
 }

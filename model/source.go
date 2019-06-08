@@ -5,3 +5,7 @@ type Source struct {
 	Name string `json:"name"`
 	Path string `json:"path"`
 }
+
+func (s Source) GetID() int64 {
+	return s.ID
+}
