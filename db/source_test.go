@@ -99,3 +99,47 @@ func TestListSources(t *testing.T) {
 
 	assert.Equal(t, len(page.Data), 2, "Source is different from created source")
 }
+
+func TestUpdateSource(t *testing.T) {
+	sourceA := &model.Source{Name: "update_test", Path: "/test/path"}
+	ctx := context.Background()
+	err := db.CreateSource(ctx, sourceA)
+	if err != nil {
+		t.Errorf("CreateSource failed: %s", err)
+	}
+
+	sourceA.Name = "update_test_2"
+	sourceA.Path = "/other/path"
+	err = db.UpdateSource(ctx, *sourceA)
+	if err != nil {
+		t.Errorf("UpdateSource failed: %s", err)
+	}
+
+	sourceB, err := db.GetSourceByID(ctx, sourceA.ID)
+	if err != nil {
+		t.Errorf("GetSourceByID returned an error for a just created row")
+	}
+
+	assert.Equal(t, sourceA, sourceB, "Source is different from created source")
+}
+
+func TestDeleteSource(t *testing.T) {
+	source := &model.Source{Name: "delete_test", Path: "/test/path"}
+	ctx := context.Background()
+	err := db.CreateSource(ctx, source)
+	if err != nil {
+		t.Errorf("CreateSource failed: %s", err)
+	}
+
+	err = db.DeleteSource(ctx, source.ID)
+	if err != nil {
+		t.Errorf("DeleteSource failed: %s", err)
+	}
+
+	emptySource, err := db.GetSourceByID(ctx, source.ID)
+	if err != nil {
+		t.Errorf("GetSourceByID returned an error for a just created row")
+	}
+
+	assert.Nil(t, emptySource)
+}

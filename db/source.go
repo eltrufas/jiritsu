@@ -56,3 +56,28 @@ func (db *Database) GetSourceByID(ctx context.Context, id int64) (*model.Source,
 	}
 	return &source, nil
 }
+
+func (db *Database) UpdateSource(ctx context.Context, source model.Source) error {
+	_, err := db.ExecContext(ctx, `
+		UPDATE sources
+		SET name=$1, path=$2
+		WHERE id=$3
+	`, source.Name, source.Path, source.ID)
+	if err != nil {
+		return errors.Errorf("Unable to update source: %w", err)
+	}
+
+	return nil
+}
+
+func (db *Database) DeleteSource(ctx context.Context, id int64) error {
+	_, err := db.ExecContext(ctx, `
+		DELETE FROM sources
+		WHERE id=$1
+	`, id)
+	if err != nil {
+		return errors.Errorf("Delete source: %w", err)
+	}
+
+	return nil
+}
